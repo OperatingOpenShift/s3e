@@ -1,7 +1,7 @@
-IMG ?= quay.io/mdewald/s3e:latest
 
-docker-build:
-	docker build . -t $(IMG)
+SUBDIRS = platform highscore game
 
-docker-push: docker-build
-	docker push $(IMG)
+all:
+	    for dir in $(SUBDIRS); do \
+				        $(MAKE) -C $$dir docker-push; \
+								    done
