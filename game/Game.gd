@@ -38,7 +38,7 @@ func placeTarget():
 	print("New target at ",targetPos)
 
 func getRandomPos():
-	return Vector2(rand.randi_range(0,gridSize.x),rand.randi_range(0,gridSize.y))
+	return Vector2(rand.randi_range(0,gridSize.x-1),rand.randi_range(0,gridSize.y-1))
 
 func resetGame():
 	speed = 5
@@ -155,7 +155,7 @@ func move(newDir):
 			
 	if !allowMovement:
 		return
-	dir = newDir
+	dir = newDir	
 	
 func moveRight():
 	if dir != 2:

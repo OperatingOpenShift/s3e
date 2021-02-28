@@ -61,6 +61,7 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 
 [node name="Game" type="Node2D"]
+position = Vector2( 0, 1 )
 script = ExtResource( 3 )
 
 [node name="Grid" type="TileMap" parent="."]
@@ -106,10 +107,10 @@ wait_time = 0.158
 one_shot = true
 
 [node name="DownButton" type="Button" parent="."]
-margin_left = 249.0
-margin_top = 483.0
-margin_right = 261.0
-margin_bottom = 503.0
+margin_left = 257.0
+margin_top = 501.0
+margin_right = 269.0
+margin_bottom = 521.0
 rect_scale = Vector2( 33.3904, 22.1764 )
 custom_styles/hover = SubResource( 7 )
 custom_styles/pressed = SubResource( 8 )
@@ -120,10 +121,10 @@ __meta__ = {
 }
 
 [node name="UpButton" type="Button" parent="."]
-margin_left = 637.0
-margin_top = 339.0
-margin_right = 649.0
-margin_bottom = 359.0
+margin_left = 647.0
+margin_top = 439.0
+margin_right = 659.0
+margin_bottom = 459.0
 rect_rotation = -180.0
 rect_scale = Vector2( 33.3904, 22.1764 )
 custom_styles/hover = SubResource( 7 )
@@ -135,10 +136,10 @@ __meta__ = {
 }
 
 [node name="RightButton" type="Button" parent="."]
-margin_left = 523.0
-margin_top = 599.0
-margin_right = 535.0
-margin_bottom = 619.0
+margin_left = 503.0
+margin_top = 655.0
+margin_right = 515.0
+margin_bottom = 675.0
 rect_rotation = -90.0
 rect_scale = Vector2( 33.3904, 22.1764 )
 custom_styles/hover = SubResource( 7 )
@@ -150,10 +151,10 @@ __meta__ = {
 }
 
 [node name="LeftButton" type="Button" parent="."]
-margin_left = 388.0
-margin_top = 213.0
-margin_right = 400.0
-margin_bottom = 233.0
+margin_left = 413.0
+margin_top = 267.0
+margin_right = 425.0
+margin_bottom = 287.0
 rect_rotation = -270.0
 rect_scale = Vector2( 33.3904, 22.1764 )
 custom_styles/hover = SubResource( 7 )
