@@ -129,21 +129,14 @@ func drawSnake():
 
 func _input(ev):
 	if ev is InputEventKey:
-		if gameOver && allowNewGame:
-			resetGame()
-			return
-			
-		if !allowMovement:
-			return
-			
-		if ev.scancode == KEY_RIGHT && dir != 2:
-			dir = 0
+		if ev.scancode == KEY_RIGHT:
+			moveRight()
 		if ev.scancode == KEY_DOWN && dir != 3:
-			dir = 1
+			moveDown()
 		if ev.scancode == KEY_LEFT && dir != 0:
-			dir = 2
+			moveLeft()
 		if ev.scancode == KEY_UP && dir != 1:
-			dir = 3
+			moveUp()
 
 
 func _enable_newgame():
@@ -154,3 +147,41 @@ func _enable_newgame():
 func allowMovement():
 	allowMovement = true
 	pass # Replace with function body.
+	
+func move(newDir):
+	if gameOver && allowNewGame:
+			resetGame()
+			return
+			
+	if !allowMovement:
+		return
+	dir = newDir
+	
+func moveRight():
+	if dir != 2:
+		move(0)
+		
+func moveDown():
+	if dir != 3:
+		move(1)
+
+func moveLeft():
+	if dir != 0:
+		move(2)
+
+func moveUp():
+	if dir != 1:
+		move(3)
+
+		
+func _on_DownButton_pressed():
+	moveDown()
+
+func _on_UpButton_pressed():
+	moveUp()
+
+func _on_RightButton_pressed():
+	moveRight()
+
+func _on_LeftButton_pressed():
+	moveLeft()
