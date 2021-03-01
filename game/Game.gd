@@ -160,18 +160,34 @@ func move(newDir):
 func moveRight():
 	if dir != 2:
 		move(0)
+	$RightButton.hide()
+	$LeftButton.hide()
+	$UpButton.show()
+	$DownButton.show()
 		
 func moveDown():
 	if dir != 3:
 		move(1)
+	$RightButton.show()
+	$LeftButton.show()
+	$UpButton.hide()
+	$DownButton.hide()
 
 func moveLeft():
 	if dir != 0:
 		move(2)
+	$RightButton.hide()
+	$LeftButton.hide()
+	$UpButton.show()
+	$DownButton.show()
 
 func moveUp():
 	if dir != 1:
 		move(3)
+	$RightButton.show()
+	$LeftButton.show()
+	$UpButton.hide()
+	$DownButton.hide()
 
 		
 func _on_DownButton_pressed():
