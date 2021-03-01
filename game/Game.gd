@@ -19,6 +19,7 @@ var speed = 5
 var gameOver = false
 var allowNewGame = false
 var allowMovement = false
+var playerName
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -26,10 +27,30 @@ func _ready():
 	rand.randomize()
 	print(gridSize)
 	resetGame()
+	playerName=get_player_name()
+	$PlayerName.text=playerName
+	$HTTPRequest.connect("request_completed", self, "_on_request_completed")
+	
+func get_player_name():
+	if !OS.has_feature('JavaScript'):
+		return "Player"
+	var jsName = JavaScript.eval(""" 
+			var url_string = window.location.href;
+			var url = new URL(url_string);
+			url.searchParams.get("player_name");
+		""")
+	if jsName == null:
+		return "Player"
+	return jsName
+	
+func get_base_url():
+	if !OS.has_feature('JavaScript'):
+		return ""
+	return JavaScript.eval("""
+		var getUrl = window.location;
+		getUrl.protocol + "//" + getUrl.host;
+		""")
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
 func placeTarget():
 	targetPos = getRandomPos()
 	while $Grid.get_cell(targetPos.x, targetPos.y) == SnakeTile:
@@ -109,8 +130,34 @@ func gameOver():
 	$GameOverLabel.visible = true
 	$GameOverLabel.text = "GAME OVER\nSCORE: "+str(points)
 	$Score.visible = false
+	sendScore(points)
 	$NewGameTimer.start()
+
+func sendScore(points):
+	var baseUrl = get_base_url()
+	if baseUrl == "" || baseUrl == null:
+		print("Not running in browser, not sending highscore")
+		return
 		
+	if playerName == "Player":
+		print("Player name not set, not sending highscore")
+		return
+	var data = {
+		"game": "s3e",
+		"version": 0.9,
+		"player": playerName,
+		"score": points,
+	}
+	var query = JSON.print(data)
+	var headers = ["Content-Type: application/json"]
+	var url = baseUrl+"/highscore"
+	print(url)
+	$HTTPRequest.request(url, headers, false, HTTPClient.METHOD_POST, query)
+	print("sending highscore to "+baseUrl+"/highscore: "+query)
+	
+func _on_request_completed(result, response_code, headers, body):
+	print("highscore sent")
+	
 func updateStats():
 	print("Speed: ",speed)
 	print("Points:",points)

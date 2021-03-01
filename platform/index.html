@@ -1,9 +1,17 @@
 <html>
+  <head>
+    <script type="text/javascript">
+      function start_game(game) {
+        window.location.replace(window.location.protocol+"//"+window.location.host+"/"+game+"/?player_name="+document.getElementById("player_name").value)
+      }
+    </script>
+  </head>
   <body>
     <h1>Arcade Gaming Platform</h1>
+    <p>Enter your name: <input type="text" id="player_name"></input></p>
     <p>Choose your game</p>
     <ul>
-      <li><a href="/s3e/">s3e</a> - a Snake Game</li>
+      <li><button onclick="start_game('s3e')">s3e</button> - a Snake Game</li>
     </ul>
     <p>Show <a href="/highscore/">Highscores</a></p>
   </body>

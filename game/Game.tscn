@@ -82,6 +82,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="PlayerName" type="Label" parent="."]
+margin_left = 66.933
+margin_top = 15.416
+margin_right = 287.933
+margin_bottom = 52.416
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="GameOverLabel" type="Label" parent="."]
 visible = false
 margin_left = -1.16797
@@ -162,6 +173,8 @@ custom_styles/normal = SubResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
 [connection signal="timeout" from="StepTimer" to="." method="step"]
 [connection signal="timeout" from="NewGameTimer" to="." method="_enable_newgame"]
 [connection signal="timeout" from="AllowMovementTimer" to="." method="allowMovement"]
