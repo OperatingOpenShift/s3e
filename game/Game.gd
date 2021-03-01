@@ -86,7 +86,7 @@ func step():
 		grow-=1
 	
 	if headPos == targetPos:
-		grow+=1
+		grow+=3
 		points += int(BasePoints * speed)
 		speed+=0.5
 		updateStats()
