@@ -88,8 +88,8 @@ func (s *Server) ScoreHandler(res http.ResponseWriter, req *http.Request) {
 		gameScores := GameScores{}
 		err = s.Db.Read("GameScores", score.Game, &gameScores)
 		if err != nil {
-			s.InternalErrorFromErr(res, err)
-			return
+			fmt.Printf("Error reading score, assuming game '%s' not found: %v", score.Game, err)
+			gameScores.Game = score.Game
 		}
 		gameScores.Scores = append(gameScores.Scores, score)
 		err = s.Db.Write("GameScores", gameScores.Game, &gameScores)
