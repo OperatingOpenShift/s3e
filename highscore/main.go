@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
 
 	"github.com/sdomino/scribble"
 
@@ -22,7 +23,10 @@ type Score struct {
 }
 
 type Server struct {
-	Db *scribble.Driver
+	sync.Mutex
+	Db         *scribble.Driver
+	InMemory   bool
+	gameScores []GameScores
 }
 
 func main() {
@@ -38,11 +42,13 @@ func main() {
 
 func NewServer() *Server {
 
+	s := Server{}
 	db, err := scribble.New("db", nil)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error creating db, running in-memory")
+		s.InMemory = true
 	}
-	s := Server{db}
+	s.Db = db
 
 	return &s
 }
@@ -50,19 +56,10 @@ func NewServer() *Server {
 func (s *Server) ScoreHandler(res http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-		records, err := s.Db.ReadAll("GameScores")
+		allScores, err := s.GetAllScores()
 		if err != nil {
 			s.InternalErrorFromErr(res, err)
 			return
-		}
-		allScores := []GameScores{}
-		for _, raw := range records {
-			gameScores := GameScores{}
-			if err := json.Unmarshal([]byte(raw), &gameScores); err != nil {
-				s.InternalErrorFromErr(res, err)
-				return
-			}
-			allScores = append(allScores, gameScores)
 		}
 		result, err := json.Marshal(allScores)
 		if err != nil {
@@ -85,19 +82,53 @@ func (s *Server) ScoreHandler(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		s.AddScore(score)
+	}
+}
+
+func (s *Server) GetAllScores() (allScores []GameScores, err error) {
+	if s.InMemory {
+		allScores = s.gameScores
+		return
+	}
+	records, err := s.Db.ReadAll("GameScores")
+	if err != nil {
+		return
+	}
+	for _, raw := range records {
 		gameScores := GameScores{}
-		err = s.Db.Read("GameScores", score.Game, &gameScores)
-		if err != nil {
-			fmt.Printf("Error reading score, assuming game '%s' not found: %v", score.Game, err)
-			gameScores.Game = score.Game
-		}
-		gameScores.Scores = append(gameScores.Scores, score)
-		err = s.Db.Write("GameScores", gameScores.Game, &gameScores)
-		if err != nil {
-			s.InternalErrorFromErr(res, err)
+		if err = json.Unmarshal([]byte(raw), &gameScores); err != nil {
 			return
 		}
+		allScores = append(allScores, gameScores)
 	}
+	return
+}
+
+func (s *Server) AddScore(score Score) (err error) {
+	s.Lock()
+	defer s.Unlock()
+	if s.InMemory {
+		for i, gameScores := range s.gameScores {
+			if gameScores.Game == score.Game {
+				s.gameScores[i].Scores = append(s.gameScores[i].Scores, score)
+			}
+		}
+		return
+	}
+
+	gameScores := GameScores{}
+	err = s.Db.Read("GameScores", score.Game, &gameScores)
+	if err != nil {
+		fmt.Printf("Error reading score, assuming game '%s' not found: %v", score.Game, err)
+		gameScores.Game = score.Game
+	}
+	gameScores.Scores = append(gameScores.Scores, score)
+	err = s.Db.Write("GameScores", gameScores.Game, &gameScores)
+	if err != nil {
+		return err
+	}
+	return
 }
 
 func (s *Server) InternalErrorFromErr(res http.ResponseWriter, err error) {
