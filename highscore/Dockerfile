@@ -10,4 +10,5 @@ RUN mkdir /app/db
 RUN chmod 777 /app/db
 COPY --from=build /src/highscore .
 RUN ls /app
+EXPOSE 8080
 CMD ["/app/highscore"]
