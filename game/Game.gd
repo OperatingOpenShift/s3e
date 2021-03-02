@@ -144,7 +144,7 @@ func sendScore(points):
 		return
 	var data = {
 		"game": "s3e",
-		"version": 0.9,
+		"version": "0.9",
 		"player": playerName,
 		"score": points,
 	}

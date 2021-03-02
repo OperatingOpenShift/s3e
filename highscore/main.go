@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
+	"strconv"
 	"sync"
 
 	"github.com/sdomino/scribble"
@@ -61,12 +63,12 @@ func (s *Server) ScoreHandler(res http.ResponseWriter, req *http.Request) {
 			s.InternalErrorFromErr(res, err)
 			return
 		}
-		result, err := json.Marshal(allScores)
+		result, err := s.renderHtml(allScores)
 		if err != nil {
 			s.InternalErrorFromErr(res, err)
 			return
 		}
-		_, err = res.Write(result)
+		_, err = res.Write([]byte(result))
 		if err != nil {
 			s.InternalErrorFromErr(res, err)
 			return
@@ -82,8 +84,27 @@ func (s *Server) ScoreHandler(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		s.AddScore(score)
+		err = s.AddScore(score)
+		if err != nil {
+			s.InternalErrorFromErr(res, err)
+			return
+		}
 	}
+}
+
+func (s *Server) renderHtml(allScores []GameScores) (string, error) {
+	html := "<html><body><h1>Highscores</h1>"
+	for _, game := range allScores {
+		html = html + "<h2>" + game.Game + "</h2>"
+		html = html + "<table>"
+		for _, score := range game.Scores {
+			html = html + "<tr><td>" + score.Player + "</td><td>" + strconv.Itoa(int(score.Score)) + "</td></tr>"
+		}
+		html = html + "</table>"
+
+	}
+	html = html + "</html>"
+	return html, nil
 }
 
 func (s *Server) GetAllScores() (allScores []GameScores, err error) {
@@ -112,6 +133,9 @@ func (s *Server) AddScore(score Score) (err error) {
 		for i, gameScores := range s.gameScores {
 			if gameScores.Game == score.Game {
 				s.gameScores[i].Scores = append(s.gameScores[i].Scores, score)
+				sort.Slice(s.gameScores[i].Scores[:], func(j, k int) bool {
+					return s.gameScores[i].Scores[j].Score > s.gameScores[i].Scores[k].Score
+				})
 			}
 		}
 		return
@@ -124,6 +148,9 @@ func (s *Server) AddScore(score Score) (err error) {
 		gameScores.Game = score.Game
 	}
 	gameScores.Scores = append(gameScores.Scores, score)
+	sort.Slice(gameScores.Scores[:], func(j, k int) bool {
+		return gameScores.Scores[j].Score > gameScores.Scores[k].Score
+	})
 	err = s.Db.Write("GameScores", gameScores.Game, &gameScores)
 	if err != nil {
 		return err
