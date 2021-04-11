@@ -3,7 +3,9 @@ FROM nginx:1.19
 RUN chmod -R a+rw /var/cache/nginx/
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY index.html /usr/share/nginx/html
+COPY default_tls.key /etc/nginx/tls.key
+COPY default_tls.crt /etc/nginx/tls.crt
 RUN rm /etc/nginx/conf.d/default.conf
 
-EXPOSE 8080
+EXPOSE 8080 4443
 CMD ["nginx", "-g", "daemon off;"]
