@@ -7,6 +7,7 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
 RUN mkdir /app/db
+RUN chgrp -R 0 /app/db && chmod -R g=u /app/db
 COPY --from=build /src/highscore .
 RUN ls /app
 EXPOSE 8080
