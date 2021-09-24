@@ -5,5 +5,7 @@ set -euxo pipefail
 GAMENAME="$(cat /tmp/src/game.name| tr -d '\n')"
 # assemble the game
 mkdir -p "/usr/share/nginx/html/$GAMENAME"
+mkdir -p "/tmp/godothome"
+export HOME="/tmp/godothome"
 /usr/bin/godot --export HTML5 /tmp/src/project.godot "/usr/share/nginx/html/$GAMENAME/index.html"
 chmod -R a+rw "/usr/share/nginx/html/$GAMENAME"
