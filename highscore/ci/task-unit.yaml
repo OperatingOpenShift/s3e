@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: verify-unit-tests
+  namespace: arcade
+spec:
+  steps:
+    - name: clone
+      image: golang
+      script: |
+        #!/bin/bash
+
+        git clone https://github.com/NautiluX/s3e /workspace/src
+    - name: test-unit
+      image: golang
+      script: |
+        #!/bin/bash
+        
+        cd /workspace/src/highscore
+        go test ./...
