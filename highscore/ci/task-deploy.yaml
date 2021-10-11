@@ -16,8 +16,10 @@ spec:
       script: |
         #!/bin/bash
         
+        set -euo pipefail
+        
         cd /workspace/src/highscore/ci
-        oc apply -f project.yaml
+        oc apply -f namespace.yaml
         oc apply -f imagestream.yaml
         oc apply -f buildconfig.yaml
 
@@ -25,6 +27,8 @@ spec:
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli
       script: |
         #!/bin/bash
+
+        set -euo pipefail
         
         oc project arcade
         oc start-build -f highscore
@@ -33,6 +37,8 @@ spec:
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli
       script: |
         #!/bin/bash
+
+        set -euo pipefail
 
         oc apply -f deployment.yaml
         oc apply -f service.yaml
