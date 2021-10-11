@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-deploy
+  namespace: arcade
+spec:
+  steps:
+    - name: clone
+      image: golang
+      script: |
+        #!/bin/bash
+
+        git clone https://github.com/NautiluX/s3e /workspace/src
+    - name: configure-project
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+      script: |
+        #!/bin/bash
+        
+        cd /workspace/src/highscore/ci
+        oc apply -f project.yaml
+        oc apply -f imagestream.yaml
+        oc apply -f buildconfig.yaml
+
+    - name: build
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+      script: |
+        #!/bin/bash
+        
+        oc project arcade
+        oc start-build -f highscore
+
+    - name: deploy
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+      script: |
+        #!/bin/bash
+
+        oc apply -f deployment.yaml
+        oc apply -f service.yaml
+        oc apply -f route.yaml

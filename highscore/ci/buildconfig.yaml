@@ -1,0 +1,28 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    build: highscore
+  name: highscore
+  namespace: arcade
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: highscore:latest
+  runPolicy: Serial
+  source:
+    contextDir: highscore
+    git:
+      uri: https://github.com/NautiluX/s3e
+    type: Git
+  strategy:
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: alpine:latest
+        namespace: arcade
+    type: Docker
+  successfulBuildsHistoryLimit: 5
