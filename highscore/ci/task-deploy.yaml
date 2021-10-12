@@ -22,7 +22,6 @@ spec:
         oc apply -f namespace.yaml
         oc apply -f imagestream.yaml
         oc apply -f buildconfig.yaml
-
     - name: build
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli
       script: |
@@ -30,9 +29,7 @@ spec:
 
         set -euo pipefail
         
-        oc project arcade
-        oc start-build -f highscore
-
+        oc start-build -F highscore -n arcade
     - name: deploy
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli
       script: |
@@ -40,6 +37,7 @@ spec:
 
         set -euo pipefail
 
+        cd /workspace/src/highscore/ci
         oc apply -f deployment.yaml
         oc apply -f service.yaml
         oc apply -f route.yaml
