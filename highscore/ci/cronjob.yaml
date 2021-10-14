@@ -1,0 +1,18 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: highscore-nightly-build
+  namespace: arcade
+spec:
+  serviceAccountName: pipeline
+  schedule: "0 1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: trigger
+            image: curlimages/curl
+            args: ["curl", "-s", "-XPOST", "--data", "{}", "http://el-build-pipeline-listener:8080"]
+          restartPolicy: Never

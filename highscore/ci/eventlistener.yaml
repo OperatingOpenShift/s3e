@@ -1,0 +1,20 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: build-pipeline-listener
+  namespace: arcade
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: build-pipeline-trigger
+      template:
+        spec: 
+          resourceTemplates:
+          - apiVersion: "tekton.dev/v1beta1"
+            kind: PipelineRun
+            metadata:
+              generateName: build-pipeline-
+            spec:
+              pipelineRef:
+                name: build-pipeline

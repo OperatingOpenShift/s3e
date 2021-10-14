@@ -1,0 +1,30 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: github-listener
+  namespace: arcade
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: github-push-trigger
+      interceptors:
+        - ref:
+            name: "github"
+          params:
+            - name: "secretRef"
+              value:
+                secretName: github-secret
+                secretKey: secret
+            - name: "eventTypes"
+              value: ["push"]
+      template:
+        spec: 
+          resourceTemplates:
+          - apiVersion: "tekton.dev/v1beta1"
+            kind: PipelineRun
+            metadata:
+              generateName: gh-build-pipeline-
+            spec:
+              pipelineRef:
+                name: build-pipeline

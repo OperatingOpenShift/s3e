@@ -1,0 +1,15 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-pipeline
+spec:
+  tasks:
+    - name: verify-unit-tests
+      taskRef:
+        name: verify-unit-tests
+    - name: build-deploy
+      taskRef:
+        name: build-deploy
+      runAfter:
+        - verify-unit-tests
