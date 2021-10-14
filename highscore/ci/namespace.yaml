@@ -3,8 +3,5 @@ kind: Namespace
 metadata:
   labels:
     kubernetes.io/metadata.name: arcade
-    openshift-pipelines.tekton.dev/namespace-reconcile-version: v1.5
   name: arcade
-spec:
-  finalizers:
-  - kubernetes
+spec: {}

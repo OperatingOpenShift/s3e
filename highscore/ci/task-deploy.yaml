@@ -19,7 +19,6 @@ spec:
         set -euo pipefail
         
         cd /workspace/src/highscore/ci
-        oc apply -f namespace.yaml
         oc apply -f imagestream.yaml
         oc apply -f buildconfig.yaml
     - name: build
@@ -35,9 +34,32 @@ spec:
       script: |
         #!/bin/bash
 
-        set -euo pipefail
+        set -euxo pipefail
 
         cd /workspace/src/highscore/ci
         oc apply -f deployment.yaml
+        BUILDDATE=$(date +%Y-%m-%d-%H%M%S)
+        oc patch deployment highscore -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"last-build\":\"$BUILDDATE\"}}}}}"
         oc apply -f service.yaml
-        oc apply -f route.yaml
+
+        # Generate and apply route
+        HOSTNAME="arcade.$(oc get ingresses.config.openshift.io  cluster -o jsonpath='{.spec.domain}')"
+        oc apply -f <(cat <<-EOF
+          apiVersion: route.openshift.io/v1
+          kind: Route
+          metadata:
+            labels:
+              app: highscore
+            name: highscore
+            namespace: arcade
+          spec:
+            host: $HOSTNAME
+            path: /highscore
+            port:
+              targetPort: 8080
+            to:
+              kind: Service
+              name: highscore
+        EOF
+        )
+
