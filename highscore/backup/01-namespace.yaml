@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: ""
+    openshift.io/display-name: ""
+    openshift.io/requester: system:admin
+    openshift.io/sa.scc.mcs: s0:c26,c0
+    openshift.io/sa.scc.supplemental-groups: 1000650000/10000
+    openshift.io/sa.scc.uid-range: 1000650000/10000
+  labels:
+    kubernetes.io/metadata.name: arcade
+  name: arcade
+spec:
+  finalizers:
+  - kubernetes

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: score-backup
+  namespace: arcade
+spec:
+  containers:
+    - name: alpine
+      image: alpine:latest
+      command: ["sleep", "24h"]
+      volumeMounts:
+        - name: backup
+          mountPath: /backup
+  volumes:
+    - name: backup
+      persistentVolumeClaim:
+        claimName: score-backup

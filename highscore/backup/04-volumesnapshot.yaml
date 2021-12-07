@@ -1,0 +1,7 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: score-backup
+spec:
+  source:
+    persistentVolumeClaimName: score

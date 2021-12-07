@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: highscore
+    app.kubernetes.io/component: highscore
+    app.kubernetes.io/instance: highscore
+  name: highscore
+  namespace: arcade
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      deployment: highscore
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        deployment: highscore
+    spec:
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/arcade/highscore
+        imagePullPolicy: IfNotPresent
+        name: highscore
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/db
+          name: score-vol
+      dnsPolicy: ClusterFirst
+      volumes:
+      - name: score-vol
+        persistentVolumeClaim:
+          claimName: score
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
