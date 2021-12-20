@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: highscore-backup
+  namespace: arcade
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:         
+          serviceAccountName: highscore-backup
+          containers:
+          - name: backup
+            image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - |
+              #!/bin/bash
+
+              set -euxo pipefail
+              BASEURL=https://raw.githubusercontent.com/NautiluX/s3e/main/highscore/backup
+
+              curl $BASEURL/04-volumesnapshot.yaml | sed s/score-backup/score-backup-$(date +%F-%H-%M-%S)/g | oc apply -f -
+              curl $BASEURL/05-backup-pvc.yaml | sed s/score-backup/score-backup-$(date +%F-%H-%M-%S)/g | oc apply -f -
+          restartPolicy: OnFailure
