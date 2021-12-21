@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: score-backup
+  namespace: arcade
   annotations:
     snapshot.alpha.kubernetes.io/snapshot: score-backup
 spec:

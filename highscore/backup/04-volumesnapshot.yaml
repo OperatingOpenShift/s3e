@@ -2,6 +2,7 @@ apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
   name: score-backup
+  namespace: arcade
 spec:
   source:
     persistentVolumeClaimName: score
