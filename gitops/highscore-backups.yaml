@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: highscore-backup
-  namespace: arcade
 spec:
   schedule: "* * * * *"
   jobTemplate:
