@@ -11,6 +11,8 @@ spec:
         #!/bin/bash
 
         git clone https://github.com/NautiluX/s3e /workspace/src
+        cd /workspace/src
+        git checkout devconf
     - name: configure-project
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli
       script: |
