@@ -20,7 +20,7 @@ spec:
         
         set -euo pipefail
         
-        cd /workspace/src/s3e/ci
+        cd /workspace/src/game/ci
         oc apply -f imagestream.yaml
         oc apply -f buildconfig.yaml
     - name: build
@@ -38,7 +38,7 @@ spec:
 
         set -euxo pipefail
 
-        cd /workspace/src/s3e/ci
+        cd /workspace/src/game/ci
         oc apply -f deployment.yaml
         BUILDDATE=$(date +%Y-%m-%d-%H%M%S)
         oc patch deployment s3e -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"last-build\":\"$BUILDDATE\"}}}}}"
