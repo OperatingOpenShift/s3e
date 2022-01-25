@@ -3,7 +3,7 @@ apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
   name: github-listener
-  namespace: arcade
+  namespace: arcade2
 spec:
   serviceAccountName: pipeline
   triggers:
