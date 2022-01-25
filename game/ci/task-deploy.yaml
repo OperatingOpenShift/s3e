@@ -60,6 +60,9 @@ spec:
             to:
               kind: Service
               name: s3e
+            tls:
+              termination: edge
+              insecureEdgeTerminationPolicy: Redirect
         EOF
         )
 
