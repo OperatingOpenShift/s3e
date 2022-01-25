@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: s3e
+    app.kubernetes.io/component: s3e
+    app.kubernetes.io/instance: s3e
+  name: s3e
+  namespace: arcade2
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+  selector:
+    deployment: s3e

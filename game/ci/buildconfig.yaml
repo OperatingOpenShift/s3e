@@ -1,0 +1,32 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: s3e
+    app.kubernetes.io/component: s3e
+    app.kubernetes.io/instance: s3e
+  name: s3e
+  namespace: arcade2
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: s3e:latest
+  runPolicy: Serial
+  source:
+    contextDir: game
+    git:
+      ref: devconf
+      uri: https://github.com/NautiluX/s3e
+    type: Git
+  strategy:
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: nginx:1.19
+    type: Docker
+  successfulBuildsHistoryLimit: 5

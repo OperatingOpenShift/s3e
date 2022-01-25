@@ -1,0 +1,65 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-deploy
+  namespace: arcade2
+spec:
+  steps:
+    - name: clone
+      image: golang
+      script: |
+        #!/bin/bash
+
+        git clone https://github.com/NautiluX/s3e /workspace/src
+    - name: configure-project
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+      script: |
+        #!/bin/bash
+        
+        set -euo pipefail
+        
+        cd /workspace/src/s3e/ci
+        oc apply -f imagestream.yaml
+        oc apply -f buildconfig.yaml
+    - name: build
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+      script: |
+        #!/bin/bash
+
+        set -euo pipefail
+        
+        oc start-build -F s3e -n arcade2
+    - name: deploy
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+      script: |
+        #!/bin/bash
+
+        set -euxo pipefail
+
+        cd /workspace/src/s3e/ci
+        oc apply -f deployment.yaml
+        BUILDDATE=$(date +%Y-%m-%d-%H%M%S)
+        oc patch deployment s3e -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"last-build\":\"$BUILDDATE\"}}}}}"
+        oc apply -f service.yaml
+
+        # Generate and apply route
+        HOSTNAME="arcade2.$(oc get ingresses.config.openshift.io  cluster -o jsonpath='{.spec.domain}')"
+        oc apply -f <(cat <<-EOF
+          apiVersion: route.openshift.io/v1
+          kind: Route
+          metadata:
+            labels:
+              app: s3e
+            name: s3e
+            namespace: arcade2
+          spec:
+            host: $HOSTNAME
+            path: /s3e
+            port:
+              targetPort: 8080
+            to:
+              kind: Service
+              name: s3e
+        EOF
+        )
+

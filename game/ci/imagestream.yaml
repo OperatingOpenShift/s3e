@@ -1,0 +1,41 @@
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+    openshift.io/image.dockerRepositoryCheck: "2022-01-25T19:35:15Z"
+  labels:
+    app: s3e
+    app.kubernetes.io/component: s3e
+    app.kubernetes.io/instance: s3e
+  name: nginx
+  namespace: arcade2
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - annotations:
+      openshift.io/imported-from: nginx:1.19
+    from:
+      kind: DockerImage
+      name: nginx:1.19
+    generation: 2
+    name: "1.19"
+    referencePolicy:
+      type: Source
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: s3e
+    app.kubernetes.io/component: s3e
+    app.kubernetes.io/instance: s3e
+  name: s3e
+  namespace: arcade2
+spec:
+  lookupPolicy:
+    local: false
