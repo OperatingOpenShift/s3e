@@ -7,8 +7,8 @@ var dir = 0
 var headPos
 var targetPos
 var snake = []
-var SnakeTile = 0
-var TargetTile = 1
+var SnakeTile = 2
+var TargetTile = 3
 var UnusedTile = -1
 var gridSize
 var points = 0
