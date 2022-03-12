@@ -1,0 +1,20 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  labels:
+    app: platform
+  name: platform-proxy
+  namespace: arcade
+spec:
+  port:
+    targetPort: 8081
+  to:
+    kind: Service
+    name: platform
+    weight: 100
+  wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
