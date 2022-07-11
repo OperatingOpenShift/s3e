@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: le-staging
+    route.openshift.io/termination: edge
+  name: platform
+  namespace: arcade
+spec:
+  rules:
+  - host: arcade-platform.apps.<cluster-domain>
+    http:
+      paths:
+      - backend:
+          service:
+            name: platform
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: game
+            port:
+              number: 8080
+        path: /s3e
+        pathType: Prefix
+      - backend:
+          service:
+            name: highscore
+            port:
+              number: 8080
+        path: /highscore
+        pathType: Prefix
+  tls:
+  - hosts:
+    - arcade-platform.apps.<cluster-domain>
+    secretName: platform-secret
